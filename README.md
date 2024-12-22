@@ -42,9 +42,9 @@ Welcome to the Operating System Programs web page! This page contains the implem
 ## Getting Started
 To access the web page, open the index.html file in your web browser. Each section of the web page contains a description and code snippets for the corresponding operating system program.
 
-File Structure
-index.html: The main HTML file that structures the content of the web page.
+File Structure:
 
+index.html: The main HTML file that structures the content of the web page.
 styles.css: The CSS file that styles the web page.
 
 script.js: The JavaScript file (if needed) for any interactive functionality.
