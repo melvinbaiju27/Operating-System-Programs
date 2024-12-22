@@ -1,5 +1,5 @@
-# Operating-System-Programs
-This repository contains a collection of programs related to various operating system concepts and algorithms. Each program demonstrates a specific concept or scheduling algorithm used in operating systems.
+Operating System Programs Web Page
+Welcome to the Operating System Programs web page! This page contains the implementation and explanation of various operating system algorithms and concepts. Each section provides code snippets and descriptions to help you understand how these algorithms work.
 
 ## List of Programs
 
@@ -40,6 +40,17 @@ This repository contains a collection of programs related to various operating s
     - Implements different page replacement algorithms such as FIFO, LRU, Optimal, etc., to manage memory.
 
 ## Getting Started
+To access the web page, open the index.html file in your web browser. Each section of the web page contains a description and code snippets for the corresponding operating system program.
+
+File Structure
+index.html: The main HTML file that structures the content of the web page.
+
+styles.css: The CSS file that styles the web page.
+
+script.js: The JavaScript file (if needed) for any interactive functionality.
+
+Viewing the Web Page
+To view the web page, open the index.html file in your preferred web browser. You can navigate through the different sections to explore the various operating system programs and their code implementations.
 
 To run these programs, you will need a C compiler (e.g., GCC) and a Unix-like operating system. Follow the instructions below to compile and run each program.
 
