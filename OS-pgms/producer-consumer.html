@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRODUCER-CONSUMER PROBLEM</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        pre {
+            background: #eaeaea;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+            white-space: pre-wrap; /* Allows wrapping of long lines */
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+            text-align: justify; /* Justify text */
+        }
+
+        ul {
+            margin: 10px 0 20px 20px;
+            text-align: justify; /* Justify text in lists */
+        }
+
+        footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+
+        .screenshot {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Producer-Consumer Problem</h1>
+    </header>
+    <main>
+        <h2>Overview</h2>
+        <p>The <strong>Producer-Consumer Problem</strong> is a classic synchronization problem in computer science that illustrates the challenges of managing shared resources between concurrent processes. Here's a brief overview of how it works:</p>
+
+        <h2>Scenario</h2>
+        <ul>
+            <li><strong>Producer</strong>: This process generates data and adds it to a shared buffer.</li>
+            <li><strong>Consumer</strong>: This process takes data from the shared buffer and processes it.</li>
+        </ul>
+
+        <h2>Shared Buffer</h2>
+        <p>The buffer has a limited size and acts as a storage area where the producer can place items and the consumer can retrieve them. The buffer can be implemented as a queue, with the producer adding items to the end and the consumer removing items from the front.</p>
+
+        <h2>Synchronization Issues</h2>
+        <ul>
+            <li><strong>Buffer Overflow</strong>: If the producer tries to add an item to a full buffer, it must wait until there is space available.</li>
+            <li><strong>Buffer Underflow</strong>: If the consumer tries to remove an item from an empty buffer, it must wait until there are items available.</li>
+        </ul>
+
+        <h2>Solutions</h2>
+        <p>To solve the synchronization issues, mechanisms such as <strong>semaphores</strong>, <strong>mutex locks</strong>, and <strong>condition variables</strong> are used:</p>
+        <ul>
+            <li><strong>Semaphores</strong>: Two semaphores are typically used—one to count the number of available slots in the buffer (<code>empty</code>) and one to count the number of items in the buffer (<code>full</code>). This ensures that the producer and consumer operate in a synchronized manner.</li>
+            <li><strong>Mutex Locks</strong>: A mutex (mutual exclusion) lock is used to ensure that only one process (either producer or consumer) accesses the buffer at a time, preventing race conditions.</li>
+            <li><strong>Condition Variables</strong>: These are used to block a process (producer or consumer) until a certain condition (like buffer not full for producer, buffer not empty for consumer) is met.</li>
+        </ul>
+        <h2>Producer-Consumer Problem Pseudocode</h2>
+        <pre><code>
+//Pseudocode for Producer-Consumer Problem
+semaphore empty = BUFFER_SIZE; // Initially, all slots are empty
+semaphore full = 0; // Initially, no items in the buffer
+mutex buffer_mutex;
+
+Producer() {
+    while (true) {
+        produce_item(); // Generate an item
+        wait(empty); // Decrement the empty semaphore
+        wait(buffer_mutex); // Acquire the mutex lock
+        add_item_to_buffer(); // Add the item to the buffer
+        signal(buffer_mutex); // Release the mutex lock
+        signal(full); // Increment the full semaphore
+    }
+}
+
+Consumer() {
+    while (true) {
+        wait(full); // Decrement the full semaphore
+        wait(buffer_mutex); // Acquire the mutex lock
+        remove_item_from_buffer(); // Remove the item from the buffer
+        signal(buffer_mutex); // Release the mutex lock
+        signal(empty); // Increment the empty semaphore
+        consume_item(); // Process the item
+    }
+}
+        </code></pre>
+        <h2>Producer-Consumer Problem Code</h2>
+        <pre><code>
+    #include &lt;stdio.h&gt;
+    #include &lt;limits.h&gt;
+    #include &lt;pthread.h&gt;
+    #include &lt;unistd.h&gt;
+    #include &lt;stdlib.h&gt;
+    #include &lt;semaphore.h&gt;
+    #include &lt;string.h&gt;
+        
+        sem_t empty, full, mutex;
+        char buf[10];
+        
+        void* producer(void* arg) {
+            int i;
+            printf("inside producer\n");
+            for (i = 0; i < 10; i++) {
+                sem_wait(&empty);
+                sem_wait(&mutex);
+                buf[i] = i;
+                printf("item produced is %d\n", buf[i]);
+                sem_post(&mutex);
+                sem_post(&full);
+                sleep(1);
+            }
+            pthread_exit("producer\n");
+        }
+        
+        void* consumer(void* arg) {
+            int j;
+            printf("inside consumer\n");
+            for (j = 0; j < 10; j++) {
+                sem_wait(&full);  // Wait on full
+                sem_wait(&mutex); // Wait on mutex
+                j = buf[j];
+                printf("consumed item is %d\n", buf[j]);
+                sem_post(&mutex); // Signal mutex
+                sem_post(&empty); // Signal empty
+                sleep(2);
+            }
+            pthread_exit("consumer\n");
+        }
+        
+        int main() {
+            pthread_t pid1, pid2;
+            sem_init(&empty, 0, 10);
+            sem_init(&full, 0, 0);
+            sem_init(&mutex, 0, 1); // Corrected the third parameter to 0
+            printf(“Melvin Baiju 24MAI1014 \n”);
+        
+            void* status;
+            pthread_create(&pid1, NULL, producer, NULL); // Create producer thread
+            pthread_create(&pid2, NULL, consumer, NULL); // Create consumer thread
+        
+            pthread_join(pid1, &status);
+            printf("the exited status of 1st is %s\n", (char*)status);
+            pthread_join(pid2, &status);
+            printf("the exited status %s\n", (char*)status);
+        
+            return 0;
+        }
+        
+        
+    
+        </code></pre>
+
+        <h2>Sample Input</h2>
+        <pre><code>
+Buffer Size: 5
+Producer's Items: Item1, Item2, Item3, Item4, Item5, Item6, Item7
+Consumer's Actions: Consume one item at a time whenever an item is available.
+
+Producer Actions:
+Produce Item:1
+Produce Item:2
+Produce Item:3
+Produce Item:4
+Produce Item:5
+Produce Item:6 (wait since the buffer is full)
+Produce Item:7 (wait since the buffer is full)
+
+Consumer Actions:
+Consume Item:1
+Consume Item:2
+Consume Item:3
+Consume Item:4
+Consume Item:5
+Consume Item:6 (producer resumes and adds it to buffer)
+Consume Item:7 (producer resumes and adds it to buffer)
+        </code></pre>
+
+        <h2>Sample Output</h2>
+        <div class="screenshot">
+            <img src="images/producer.png" alt="FCFS Output Screenshot">
+        </div>
+        <footer>
+            <p>&copy; 2024 Operating System Programs By Melvin. All rights reserved.</p>
+        </footer>
+</body>
+</html>

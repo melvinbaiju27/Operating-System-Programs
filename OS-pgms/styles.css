@@ -1,0 +1,84 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+main {
+    flex: 1; /* This allows the main section to grow and fill the available space */
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.feature-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Set to 4 columns */
+    gap: 20px; /* Space between the feature cards */
+    padding: 0 20px; /* Padding on the sides */
+}
+
+.feature {
+    background: #35424a;
+    color: #ffffff;
+    padding: 40px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-align: center;
+}
+
+.feature:hover {
+    background: #4a5d6a;
+}
+
+footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+}
+
+textarea {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+pre {
+    background: #eaeaea;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+    white-space: pre-wrap; /* Allows wrapping of long lines */
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    .feature-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns for screens smaller than 800px */
+    }
+}
+
+@media (max-width: 500px) {
+    .feature-container {
+        grid-template-columns: 1fr; /* 1 column for screens smaller than 500px */
+    }
+}

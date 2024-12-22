@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Replacement Algorithms</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        pre {
+            background: #eaeaea;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+            white-space: pre-wrap; /* Allows wrapping of long lines */
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+            text-align: justify; /* Justify text */
+        }
+
+        ul {
+            margin: 10px 0 20px 20px;
+            text-align: justify; /* Justify text in lists */
+        }
+
+        footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+
+        .screenshot {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Page Replacement Algorithms</h1>
+    </header>
+    <main>
+        <h2>Overview</h2>
+        <p>Page Replacement Algorithms are crucial in managing the limited physical memory of a computer system. When a page of memory is needed but not present in physical memory, a page fault occurs, and the operating system must decide which existing page to replace. Here are some common page replacement algorithms:</p>
+
+        <h2>1. First-In, First-Out (FIFO) Algorithm</h2>
+        <p><strong>Description:</strong> The oldest page in memory is replaced first.</p>
+        <h3>Process:</h3>
+        <ul>
+            <li>Maintain a queue of pages in memory.</li>
+            <li>Replace the page at the front of the queue when a new page needs to be loaded.</li>
+        </ul>
+        <h3>Advantages:</h3>
+        <ul>
+            <li>Simple to implement.</li>
+        </ul>
+        <h3>Disadvantages:</h3>
+        <ul>
+            <li>May not provide the best performance, as it does not consider the usage of pages.</li>
+        </ul>
+
+        <h2>2. Least Recently Used (LRU) Algorithm</h2>
+        <p><strong>Description:</strong> Replaces the page that has not been used for the longest time.</p>
+        <h3>Process:</h3>
+        <ul>
+            <li>Track the usage of each page.</li>
+            <li>Replace the least recently used page.</li>
+        </ul>
+        <h3>Advantages:</h3>
+        <ul>
+            <li>Provides good performance by considering recent usage.</li>
+        </ul>
+        <h3>Disadvantages:</h3>
+        <ul>
+            <li>Requires additional data structures to track page usage, which can be complex.</li>
+        </ul>
+
+        <h2>3. Most Recently Used (MRU) Algorithm</h2>
+<p><strong>Description:</strong> Replaces the page that was most recently used.</p>
+<h3>Process:</h3>
+<ul>
+    <li>Track the usage of each page.</li>
+    <li>Replace the most recently used page.</li>
+</ul>
+<h3>Advantages:</h3>
+<ul>
+    <li>Useful in scenarios where the most recently used pages are least likely to be needed again.</li>
+</ul>
+<h3>Disadvantages:</h3>
+<ul>
+    <li>May not always provide the best performance.</li>
+</ul>
+
+
+        <h2>4. Optimal Page Replacement Algorithm</h2>
+<p><strong>Description:</strong> Replaces the page that will not be used for the longest time in the future.</p>
+<h3>Process:</h3>
+<ul>
+    <li>Look ahead in the page reference string.</li>
+    <li>Replace the page that is not needed for the longest period.</li>
+</ul>
+<h3>Advantages:</h3>
+<ul>
+    <li>Provides the best possible page-fault rate.</li>
+</ul>
+<h3>Disadvantages:</h3>
+<ul>
+    <li>Requires future knowledge of the reference string, which is often impractical.</li>
+</ul>
+
+
+        <h2>Page Replacement Algorithm Code</h2>
+        <pre><code>
+    #include &lt;stdio.h&gt;
+    #include &lt;limits.h&gt;
+    #define MAX_PROCESSES 10
+
+    #include <stdio.h>
+        #define MAX_FRAMES 4
+        #define SEQUENCE_SIZE 12
+        
+        int reference_sequence[] = {2,4,1,0,1,4,4,1,0,1,4,2};
+        
+        // Function to print the frame contents
+        void print_frame(int frame[], int frame_count) {
+            for (int i = 0; i < frame_count; i++) {
+                if (frame[i] == -1) {
+                    printf("- ");
+                } else {
+                    printf("%d ", frame[i]);
+                }
+            }
+            printf("\n");
+        }
+        
+        // FIFO Algorithm
+        void fifo(int frames) {
+            int frame[frames];
+            int page_faults = 0, page_hits = 0;
+            int index = 0;
+        
+            // Initialize the frame array to -1 (empty)
+            for (int i = 0; i < frames; i++) {
+                frame[i] = -1;
+            }
+        
+            printf("\nFIFO Algorithm (frames = %d):\n", frames);
+        
+            for (int i = 0; i < SEQUENCE_SIZE; i++) {
+                int found = 0;
+                // Check if the page is already in the frame (hit)
+                for (int j = 0; j < frames; j++) {
+                    if (frame[j] == reference_sequence[i]) {
+                        found = 1;
+                        page_hits++;
+                        break;
+                    }
+                }
+        
+                // If not found, page fault occurs
+                if (!found) {
+                    frame[index] = reference_sequence[i];
+                    index = (index + 1) % frames;
+                    page_faults++;
+                }
+        
+                // Print the current frame status
+                print_frame(frame, frames);
+            }
+        
+            printf("Total Hits: %d, Total Misses: %d\n", page_hits, page_faults);
+        }
+        
+        // LRU Algorithm
+        void lru(int frames) {
+            int frame[frames], time[frames];
+            int page_faults = 0, page_hits = 0;
+            int time_counter = 0;
+        
+            // Initialize the frame array to -1 (empty)
+            for (int i = 0; i < frames; i++) {
+                frame[i] = -1;
+                time[i] = -1;
+            }
+        
+            printf("\nLRU Algorithm (frames = %d):\n", frames);
+        
+            for (int i = 0; i < SEQUENCE_SIZE; i++) {
+                int found = 0, min_time = time_counter;
+        
+                // Check if the page is already in the frame (hit)
+                for (int j = 0; j < frames; j++) {
+                    if (frame[j] == reference_sequence[i]) {
+                        found = 1;
+                        page_hits++;
+                        time[j] = time_counter;
+                        break;
+                    }
+                }
+        
+                // If not found, page fault occurs
+                if (!found) {
+                    int lru_index = 0;
+                    for (int j = 0; j < frames; j++) {
+                        if (time[j] < min_time) {
+                            min_time = time[j];
+                            lru_index = j;
+                        }
+                    }
+                    frame[lru_index] = reference_sequence[i];
+                    time[lru_index] = time_counter;
+                    page_faults++;
+                }
+        
+                time_counter++;
+                // Print the current frame status
+                print_frame(frame, frames);
+            }
+        
+            printf("Total Hits: %d, Total Misses: %d\n", page_hits, page_faults);
+        }
+        
+        // MRU Algorithm
+        void mru(int frames) {
+            int frame[frames];
+            int page_faults = 0, page_hits = 0;
+            int last_used_index = -1;
+        
+            // Initialize the frame array to -1 (empty)
+            for (int i = 0; i < frames; i++) {
+                frame[i] = -1;
+            }
+        
+            printf("\nMRU Algorithm (frames = %d):\n", frames);
+        
+            for (int i = 0; i < SEQUENCE_SIZE; i++) {
+                int found = 0;
+        
+                // Check if the page is already in the frame (hit)
+                for (int j = 0; j < frames; j++) {
+                    if (frame[j] == reference_sequence[i]) {
+                        found = 1;
+                        page_hits++;
+                        last_used_index = j;
+                        break;
+                    }
+                }
+        
+                // If not found, page fault occurs
+                if (!found) {
+                    if (last_used_index != -1) {
+                        frame[last_used_index] = reference_sequence[i];
+                    } else {
+                        frame[0] = reference_sequence[i];
+                        last_used_index = 0;
+                    }
+                    page_faults++;
+                }
+        
+                // Print the current frame status
+                print_frame(frame, frames);
+            }
+        
+            printf("Total Hits: %d, Total Misses: %d\n", page_hits, page_faults);
+        }
+        
+        // Optimal Algorithm
+        void optimal(int frames) {
+            int frame[frames];
+            int page_faults = 0, page_hits = 0;
+        
+            // Initialize the frame array to -1 (empty)
+            for (int i = 0; i < frames; i++) {
+                frame[i] = -1;
+            }
+        
+            printf("\nOptimal Algorithm (frames = %d):\n", frames);
+        
+            for (int i = 0; i < SEQUENCE_SIZE; i++) {
+                int found = 0;
+        
+                // Check if the page is already in the frame (hit)
+                for (int j = 0; j < frames; j++) {
+                    if (frame[j] == reference_sequence[i]) {
+                        found = 1;
+                        page_hits++;
+                        break;
+                    }
+                }
+        
+                // If not found, page fault occurs
+                if (!found) {
+                    int farthest = i, replace_index = -1;
+                    for (int j = 0; j < frames; j++) {
+                        int k;
+                        for (k = i + 1; k < SEQUENCE_SIZE; k++) {
+                            if (frame[j] == reference_sequence[k]) {
+                                break;
+                            }
+                        }
+                        if (k > farthest) {
+                            farthest = k;
+                            replace_index = j;
+                        }
+                        if (k == SEQUENCE_SIZE) {
+                            replace_index = j;
+                            break;
+                        }
+                    }
+                    frame[replace_index] = reference_sequence[i];
+                    page_faults++;
+                }
+        
+                // Print the current frame status
+                print_frame(frame, frames);
+            }
+        
+            printf("Total Hits: %d, Total Misses: %d\n", page_hits, page_faults);
+        }
+        
+        int main() {
+            int choice;
+        
+            do {
+                printf("\nPage Replacement Algorithms Menu:\n");
+                printf("1. FIFO (frames = 3)\n");
+                printf("2. LRU (frames = 3)\n");
+                printf("3. MRU (frames = 4)\n");
+                printf("4. Optimal (frames = 4)\n");
+                printf("5. Exit\n");
+                printf("Enter your choice: ");
+                scanf("%d", &choice);
+        
+                switch (choice) {
+                    case 1:
+                        fifo(3);
+                        break;
+                    case 2:
+                        lru(3);
+                        break;
+                    case 3:
+                        mru(4);
+                        break;
+                    case 4:
+                        optimal(4);
+                        break;
+                    case 5:
+                        printf("Exiting program...\n");
+                        break;
+                    default:
+                        printf("Invalid choice! Please try again.\n");
+                }
+            } while (choice != 5);
+        
+            return 0;
+        }        
+        </code></pre>
+        <h2>Sample Output</h2>
+        <div class="screenshot">
+            <img src="images/page1.png" alt="FCFS Output Screenshot">
+            <img src="images/page2.png" alt="FCFS Output Screenshot">
+            <img src="images/page3.png" alt="FCFS Output Screenshot">
+        </div>
+        <footer>
+            <p>&copy; 2024 Operating System Programs By Melvin. All rights reserved.</p>
+        </footer>
+</body>
+</html>

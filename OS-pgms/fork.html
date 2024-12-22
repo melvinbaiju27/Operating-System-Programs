@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Fork System Call</title>
+    <style>
+        /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #35424a;
+    margin-top: 20px;
+}
+
+h3 {
+    color: #35424a;
+}
+
+p {
+    margin: 10px 0;
+}
+
+ol, ul {
+    margin: 10px 0 20px 20px;
+}
+
+pre {
+    background: #eaeaea;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+    white-space: pre-wrap; /* Allows wrapping of long lines */
+    border: 1px solid #ccc;
+}
+
+code {
+    background: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Understanding the Fork System Call</h1>
+    </header>
+    <main>
+        <section>
+            <h2>What is `fork()`?</h2>
+            <p>The <code>fork()</code> system call is a fundamental function in Unix-like operating systems that is used to create a new process. The new process created by <code>fork()</code> is called the child process, and the process that calls <code>fork()</code> is referred to as the parent process.</p>
+        </section>
+
+        <section>
+            <h2>How Does `fork()` Work?</h2>
+            <p>When a process calls <code>fork()</code>, the operating system performs the following actions:</p>
+            <ol>
+                <li>The operating system creates a new process by duplicating the calling (parent) process.</li>
+                <li>The child process receives a unique process ID (PID) and a copy of the parent's memory space, including variables, program counter, and file descriptors.</li>
+                <li>Both processes continue executing from the point where <code>fork()</code> was called.</li>
+                <li>The return value of <code>fork()</code> is different for the parent and child processes:
+                    <ul>
+                        <li>In the parent process, <code>fork()</code> returns the PID of the child process.</li>
+                        <li>In the child process, <code>fork()</code> returns 0.</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Example of `fork()`</h2>
+            <p>Here is a simple example of using <code>fork()</code> in a C program:</p>
+            <pre><code>
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    fork(); // Create a new process
+    fork(); // Create another new process
+    printf("HELLO\n");
+    return 0;
+}
+            </code></pre>
+            <p>In this example, the <code>fork()</code> function is called twice, resulting in four processes executing the <code>printf</code> statement, which will print "HELLO" four times.</p>
+        </section>
+
+        <section>
+            <h2>Key Points</h2>
+            <ul>
+                <li><code>fork()</code> is used to create a new process.</li>
+                <li>The child process is a duplicate of the parent process.</li>
+                <li>Both processes continue executing the code after the <code>fork()</code> call.</li>
+                <li>The return value of <code>fork()</code> helps distinguish between the parent and child processes.</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Operating System Programs By Melvin. All rights reserved.</p>
+    </footer>
+</body>
+</html>

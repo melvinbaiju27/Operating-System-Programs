@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PREMPTIVE PRIORITY SCHEDULING </title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        pre {
+            background: #eaeaea;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+            white-space: pre-wrap; /* Allows wrapping of long lines */
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+            text-align: justify; /* Justify text */
+        }
+
+        ul {
+            margin: 10px 0 20px 20px;
+            text-align: justify; /* Justify text in lists */
+        }
+
+        footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+
+        .screenshot {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PREMPTIVE PRIORITY SCHEDULING </h1>
+    </header>
+    <main>
+        <h2>Overview</h2>
+        <p><strong>Preemptive Priority Scheduling</strong> is a CPU scheduling algorithm where each process is assigned a priority, and the CPU selects the process with the highest priority to run next. Unlike non-preemptive scheduling, preemptive priority scheduling allows for the interruption of the currently running process if a new process with a higher priority arrives. Here's how it works:</p>
+        
+        <h2>How It Works</h2>
+        <ul>
+            <li><strong>Order of Execution</strong>: Processes are scheduled based on their priority. The process with the highest priority (usually indicated by the smallest numerical value) is given access to the CPU. If two processes have the same priority, the tie can be resolved using their arrival times.</li>
+            <li><strong>Preemptive Nature</strong>: The currently executing process can be interrupted if a new process with a higher priority arrives. This ensures that the highest priority process is always given the CPU, even if it means stopping another process in the middle of its execution.</li>
+            <li><strong>Dynamic Adjustment</strong>: The scheduler continuously checks for new processes and compares their priorities with the currently running process to determine if a context switch is needed.</li>
+        </ul>
+
+        <h2>Advantages</h2>
+        <ul>
+            <li><strong>Improved Responsiveness</strong>: Critical or high-priority tasks get immediate attention, which is crucial in real-time systems where certain tasks need to be executed promptly.</li>
+            <li><strong>Flexible</strong>: It can handle varying priority levels dynamically and adjust the scheduling accordingly.</li>
+        </ul>
+
+        <h2>Disadvantages</h2>
+        <ul>
+            <li><strong>High Overhead</strong>: Frequent context switches can lead to significant overhead, reducing overall system efficiency.</li>
+            <li><strong>Starvation</strong>: Lower-priority processes might experience indefinite delays if high-priority processes keep arriving, leading to starvation.</li>
+        </ul>
+        <h2>Preemptive Priority Scheduling Code</h2>
+        <pre><code>
+    #include &lt;stdio.h&gt;
+    #include &lt;limits.h&gt;
+    #define MAX_PROCESSES 10
+
+        typedef struct {
+            int id;
+            int arrival_time;
+            int burst_time;
+            int remaining_time;
+            int completion_time;
+            int waiting_time;
+            int turnaround_time;
+            int response_time;
+            int priority;
+            int started;
+        } Process;
+        
+        void calculateTimes(Process processes[], int n) {
+            for (int i = 0; i < n; i++) {
+                processes[i].turnaround_time = processes[i].completion_time - processes[i].arrival_time;
+                processes[i].waiting_time = processes[i].turnaround_time - processes[i].burst_time;
+            }
+            float total_turnaround_time = 0, total_waiting_time = 0;
+            for (int i = 0; i < n; i++) {
+                total_turnaround_time += processes[i].turnaround_time;
+                total_waiting_time += processes[i].waiting_time;
+            }
+            printf("\nAverage Turnaround Time: %.2f\n", total_turnaround_time / n);
+            printf("Average Waiting Time: %.2f\n", total_waiting_time / n);
+        }
+        
+        void print_processes(Process processes[], int n) {
+            printf("\nID\tArrival\tBurst\tPriority\tCompletion\tTurnaround\tWaiting\tResponse\n");
+            for (int i = 0; i < n; i++) {
+                printf("%d\t%d\t%d\t%d\t\t%d\t\t%d\t\t%d\t%d\n",
+                       processes[i].id,
+                       processes[i].arrival_time,
+                       processes[i].burst_time,
+                       processes[i].priority,
+                       processes[i].completion_time,
+                       processes[i].turnaround_time,
+                       processes[i].waiting_time,
+                       processes[i].response_time);
+            }
+        }
+        
+        void preemptivePriority(Process processes[], int n) {
+            int currentTime = 0;
+            int completed = 0;
+            while (completed < n) {
+                int maxPriority = INT_MAX;
+                int index = -1;
+                for (int i = 0; i < n; i++) {
+                    if (processes[i].arrival_time <= currentTime && processes[i].remaining_time > 0) {
+                        if (processes[i].priority < maxPriority) {
+                            maxPriority = processes[i].priority;
+                            index = i;
+                        }
+                    }
+                }
+                if (index != -1) {
+                    if (!processes[index].started) {
+                        processes[index].response_time = currentTime - processes[index].arrival_time;
+                        processes[index].started = 1;
+                    }
+                    currentTime++;
+                    processes[index].remaining_time--;
+                    if (processes[index].remaining_time == 0) {
+                        processes[index].completion_time = currentTime;
+                        completed++;
+                    }
+                } else {
+                    currentTime++;
+                }
+            }
+            calculateTimes(processes, n);
+        }
+        
+        int main() {
+            Process processes[MAX_PROCESSES];
+            int n;
+            printf("Enter the number of processes: ");
+            scanf("%d", &n);
+        
+            for (int i = 0; i < n; i++) {
+                processes[i].id = i + 1;
+                printf("Enter arrival time for Process %d: ", processes[i].id);
+                scanf("%d", &processes[i].arrival_time);
+                printf("Enter burst time for Process %d: ", processes[i].id);
+                scanf("%d", &processes[i].burst_time);
+                printf("Enter priority for Process %d: ", processes[i].id);
+                scanf("%d", &processes[i].priority);
+                processes[i].remaining_time = processes[i].burst_time;
+                processes[i].completion_time = 0;
+                processes[i].started = 0;
+            }
+        
+            preemptivePriority(processes, n);
+            print_processes(processes, n);
+        
+            return 0;
+        }
+        
+    
+        </code></pre>
+
+        <h2>Sample Input</h2>
+        <pre><code>
+            Processes: 1, 2, 3, 4, 5
+            Arrivat Times: 0, 5, 12, 2, 9
+            Burst Times: 11, 28, 2, 10, 16
+            Priority (0-LOWEST AND 4-HIGHEST): 2, 0, 3, 1, 4
+        </code></pre>
+
+        <h2>Sample Output</h2>
+        <div class="screenshot">
+            <img src="images/pree.png" alt="Output Screenshot">
+        </div>
+        <footer>
+            <p>&copy; 2024 Operating System Programs By Melvin. All rights reserved.</p>
+        </footer>
+</body>
+</html>

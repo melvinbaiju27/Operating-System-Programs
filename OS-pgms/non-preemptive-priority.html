@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NON PREMPTIVE PRIORITY SCHEDULING </title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: #35424a;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: auto;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        pre {
+            background: #eaeaea;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: auto;
+            white-space: pre-wrap; /* Allows wrapping of long lines */
+            border: 1px solid #ccc;
+        }
+
+        h2 {
+            color: #35424a;
+            margin-top: 20px;
+        }
+
+        p {
+            margin: 10px 0;
+            text-align: justify; /* Justify text */
+        }
+
+        ul {
+            margin: 10px 0 20px 20px;
+            text-align: justify; /* Justify text in lists */
+        }
+
+        footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    margin-top: 20px;
+}
+
+        .screenshot {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .screenshot img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>NON PREMPTIVE PRIORITY SCHEDULING </h1>
+    </header>
+    <main>
+        <h2>Overview</h2>
+        <p><strong>Non-Preemptive Priority Scheduling</strong> is a CPU scheduling algorithm where each process is assigned a priority, and the process with the highest priority is selected for execution next. Here's an overview of how it works:</p>
+        
+        <h2>How It Works</h2>
+        <ul>
+            <li><strong>Order of Execution</strong>: Processes are scheduled based on their priority. The process with the highest priority (usually denoted by the smallest numerical value) is executed first. If two processes have the same priority, the tie can be broken using their arrival times.</li>
+            <li><strong>Non-Preemptive Nature</strong>: Once a process starts executing, it runs to completion without being interrupted, even if another process with a higher priority arrives. This means the CPU will not switch tasks until the current process finishes its execution.</li>
+            <li><strong>Priority Assignment</strong>: Priorities can be assigned based on various criteria, such as the importance of the task, deadlines, or resource requirements.</li>
+        </ul>
+
+        <h2>Advantages</h2>
+        <ul>
+            <li><strong>Simplicity</strong>: It is easy to implement and understand.</li>
+            <li><strong>Ensures Important Tasks are Executed</strong>: High-priority tasks are guaranteed to be executed first, which can be beneficial in real-time systems where certain tasks must be completed within strict deadlines.</li>
+        </ul>
+
+        <h2>Disadvantages</h2>
+        <ul>
+            <li><strong>Starvation</strong>: Lower-priority processes may suffer from indefinite delays if higher-priority processes keep arriving, leading to starvation.</li>
+            <li><strong>Not Ideal for Time-Sharing Systems</strong>: It may not provide the best performance in systems where responsiveness and efficient multitasking are crucial.</li>
+        </ul>
+        <h2>Non-Preemptive Priority Scheduling Algorithm Code</h2>
+        <pre><code>
+    #include &lt;stdio.h&gt;
+    #include &lt;limits.h&gt;
+    #define MAX_PROCESSES 10
+
+        typedef struct {
+            int id;
+            int arrival_time;
+            int burst_time;
+            int completion_time;
+            int waiting_time;
+            int turnaround_time;
+            int response_time;
+            int priority;
+        } Process;
+        
+        void calculateTimes(Process processes[], int n) {
+            for (int i = 0; i < n; i++) {
+                processes[i].turnaround_time = processes[i].completion_time - processes[i].arrival_time;
+                processes[i].waiting_time = processes[i].turnaround_time - processes[i].burst_time;
+            }
+            float total_turnaround_time = 0, total_waiting_time = 0;
+            for (int i = 0; i < n; i++) {
+                total_turnaround_time += processes[i].turnaround_time;
+                total_waiting_time += processes[i].waiting_time;
+            }
+            printf("\nAverage Turnaround Time: %.2f\n", total_turnaround_time / n);
+            printf("Average Waiting Time: %.2f\n", total_waiting_time / n);
+        }
+        
+        void print_processes(Process processes[], int n) {
+            printf("\nID\tArrival\tBurst\tPriority\tCompletion\tTurnaround\tWaiting\n");
+            for (int i = 0; i < n; i++) {
+                printf("%d\t%d\t%d\t%d\t\t%d\t\t%d\t\t%d\n",
+                       processes[i].id,
+                       processes[i].arrival_time,
+                       processes[i].burst_time,
+                       processes[i].priority,
+                       processes[i].completion_time,
+                       processes[i].turnaround_time,
+                       processes[i].waiting_time);
+            }
+        }
+        
+        void nonPreemptivePriority(Process processes[], int n) {
+            int currentTime = 0;
+            int completed = 0;
+            while (completed < n) {
+                int maxPriority = -1;
+                int index = -1;
+                for (int i = 0; i < n; i++) {
+                    if (processes[i].arrival_time <= currentTime && processes[i].completion_time == 0) {
+                        if (processes[i].priority > maxPriority) {
+                            maxPriority = processes[i].priority;
+                            index = i;
+                        }
+                    }
+                }
+                if (index != -1) {
+                    currentTime += processes[index].burst_time;
+                    processes[index].completion_time = currentTime;
+                    completed++;
+                } else {
+                    currentTime++;
+                }
+            }
+            calculateTimes(processes, n);
+        }
+        
+        int main() {
+            Process processes[MAX_PROCESSES];
+            int n;
+            printf("Enter the number of processes: ");
+            scanf("%d", &n);
+        
+            for (int i = 0; i < n; i++) {
+                processes[i].id = i + 1;
+                printf("Enter arrival time for Process %d: ", processes[i].id);
+                scanf("%d", &processes[i].arrival_time);
+                printf("Enter burst time for Process %d: ", processes[i].id);
+                scanf("%d", &processes[i].burst_time);
+                printf("Enter priority for Process %d: ", processes[i].id);
+                scanf("%d", &processes[i].priority);
+                processes[i].completion_time = 0;
+            }
+        
+            nonPreemptivePriority(processes, n);
+            print_processes(processes, n);
+        
+            return 0;
+        }
+        
+    
+        </code></pre>
+
+        <h2>Sample Input</h2>
+        <pre><code>
+    Processes: 1, 2, 3, 4, 5
+    Arrivat Times: 0, 5, 12, 2, 9
+    Burst Times: 11, 28, 2, 10, 16
+    Priority (0-LOWEST AND 4-HIGHEST): 2, 0, 3, 1, 4
+        </code></pre>
+
+        <h2>Sample Output</h2>
+        <div class="screenshot">
+            <img src="images/non-pree.png" alt="FCFS Output Screenshot">
+        </div>
+        <footer>
+            <p>&copy; 2024 Operating System Programs By Melvin. All rights reserved.</p>
+        </footer>
+</body>
+</html>
