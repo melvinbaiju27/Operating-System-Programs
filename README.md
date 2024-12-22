@@ -1,4 +1,4 @@
-Operating System Programs Web Page
+###Operating System Programs Web Page
 Welcome to the Operating System Programs web page! This page contains the implementation and explanation of various operating system algorithms and concepts. Each section provides code snippets and descriptions to help you understand how these algorithms work.
 
 ## List of Programs
@@ -42,7 +42,7 @@ Welcome to the Operating System Programs web page! This page contains the implem
 ## Getting Started
 To access the web page, open the index.html file in your web browser. Each section of the web page contains a description and code snippets for the corresponding operating system program.
 
-File Structure:
+**File Structure:**
 
 index.html: The main HTML file that structures the content of the web page.
 styles.css: The CSS file that styles the web page.
