@@ -1,10 +1,4 @@
 # Operating-System-Programs
-Sure! Here's a sample README file for a collection of operating system programs:
-
----
-
-# Operating System Programs
-
 This repository contains a collection of programs related to various operating system concepts and algorithms. Each program demonstrates a specific concept or scheduling algorithm used in operating systems.
 
 ## List of Programs
